@@ -138,6 +138,8 @@ if dein#load_state('~/.dein')
   call dein#add('Shougo/neosnippet')
   call dein#add('Shougo/neosnippet-snippets')
 
+  call dein#add('tpope/vim-fugitive') " Git
+
   " Required:
   call dein#end()
   call dein#save_state()
@@ -195,6 +197,11 @@ let g:deoplete#sources#clang#flags = [
 set termguicolors
 set background=dark
 colorscheme solarized
+
+""" FZF """
+"
+nmap <Leader>ft :Tags<CR>   " Global tag search
+nmap <Leader>fbt :BTags<CR> " Local tag search
 
 """ clang format """
 "
