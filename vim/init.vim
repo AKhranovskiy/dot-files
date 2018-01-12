@@ -36,6 +36,9 @@ set lazyredraw      " redraw only when we need to
 set number          " show line numbers
 set showmatch       " highlight matching [{()}]
 set wildmenu        " visual autocomplete for command menu
+set textwidth=100
+set colorcolumn=100
+set scrolloff=9999  " Keep working line in the center
 
 """ Search
 "
@@ -47,7 +50,7 @@ nnoremap <leader><space> :nohlsearch<CR>
 """ Folding
 "
 set foldenable          " enable folding
-set foldlevelstart=3    " open third level fold by default
+set foldlevelstart=10   " open third level fold by default
 set foldmethod=syntax
 set foldnestmax=10      " 10 nested fold max
 "" space open/closes folds
@@ -140,6 +143,8 @@ if dein#load_state('~/.dein')
 
   call dein#add('tpope/vim-fugitive') " Git
 
+  call dein#add('MattesGroeger/vim-bookmarks') " Bookmarks
+
   " Required:
   call dein#end()
   call dein#save_state()
@@ -200,8 +205,9 @@ colorscheme solarized
 
 """ FZF """
 "
-nmap <Leader>ft :Tags<CR>   " Global tag search
-nmap <Leader>fbt :BTags<CR> " Local tag search
+nmap <Leader>ft :Tags<CR>
+nmap <Leader>fbt :BTags<CR>
+nmap <C-p> :Files<CR>
 
 """ clang format """
 "
@@ -216,7 +222,7 @@ let g:clang_format#style_options = {
       \ "FixNamespaceComments" : "true",
       \}
       "\ "SortUsingDeclarations" : "true",
-let g:clang_format#auto_format_on_insert_leave = 1
+let g:clang_format#auto_format_on_insert_leave = 0
 autocmd FileType c,cpp,objc nnoremap <buffer><Leader>cf :<C-u>ClangFormat<CR>
 autocmd FileType c,cpp,objc vnoremap <buffer><Leader>cf :ClangFormat<CR>
 autocmd FileType c,cpp,objc map <buffer><Leader>x <Plug>(operator-clang-format)
