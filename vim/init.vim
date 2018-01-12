@@ -31,7 +31,7 @@ set copyindent    " Make autoindent use the same chars as prev line
 """ UI config
 "
 filetype indent on  " load filetype-specific indent files
-"set cursorline      " highlight current line
+" set cursorline      " highlight current line
 set lazyredraw      " redraw only when we need to
 set number          " show line numbers
 set showmatch       " highlight matching [{()}]
@@ -138,11 +138,9 @@ if dein#load_state('~/.dein')
   call dein#add('peterhoeg/vim-qml')
   call dein#add('dag/vim-fish')
 
-  " call dein#add('w0rp/ale') " Async Linter Engine
-
   call dein#add('morhetz/gruvbox') "Color scheme: gruvbox
 
-  call dein#add('/usr/local/opt/fzf') " Fuzzy finder
+  call dein#add('/home/khranovs/.fzf') " Fuzzy finder
   call dein#add('junegunn/fzf.vim')
 
   call dein#add('scrooloose/nerdtree')
@@ -177,27 +175,27 @@ endif
 """ Deoplete """
 "
 let g:deoplete#enable_at_startup = 1
-let g:deoplete#sources#clang#libclang_path='/usr/local/Cellar/llvm/HEAD-3638207/lib/libclang.dylib'
-let g:deoplete#sources#clang#clang_header='/usr/local/Cellar/llvm/HEAD-3638207/lib/clang/8.0.0/include/'
+let g:deoplete#sources#clang#libclang_path='/usr/lib/llvm-5.0/lib/libclang-5.0.so.1'
+let g:deoplete#sources#clang#clang_header='/usr/lib/llvm-5.0/lib/clang/5.0.0/include/'
 let g:deoplete#sources#clang#std={'cpp':'c++17'}
-let g:deoplete#sources#clang#flags = [
-      \ "-cc1",
-      \ "-triple", "x86_64-apple-macosx10.13.0",
-      \ "-discard-value-names",
-      \ "-mrelocation-model", "pic", "-pic-level", "2",
-      \ "-mthread-model", "posix",
-      \ "-dwarf-column-info",
-      \ "-debugger-tuning=lldb",
-      \ "-resource-dir", "/usr/local/Cellar/llvm/HEAD-3638207/lib/clang/8.0.0",
-      \ "-stdlib=libc++",
-      \ "-fdeprecated-macro",
-      \ "-ferror-limit", "20",
-      \ "-fmessage-length", "99",
-      \ "-stack-protector", "1",
-      \ "-fcxx-exceptions",
-      \ "-fexceptions",
-      \ "-fmax-type-align=16",
-      \ "-fdiagnostics-show-option"]
+" let g:deoplete#sources#clang#flags = [
+"       \ "-cc1",
+"       \ "-triple", "x86_64-apple-macosx10.13.0",
+"       \ "-discard-value-names",
+"       \ "-mrelocation-model", "pic", "-pic-level", "2",
+"       \ "-mthread-model", "posix",
+"       \ "-dwarf-column-info",
+"       \ "-debugger-tuning=lldb",
+"       \ "-resource-dir", "/usr/local/Cellar/llvm/HEAD-3638207/lib/clang/8.0.0",
+"       \ "-stdlib=libc++",
+"       \ "-fdeprecated-macro",
+"       \ "-ferror-limit", "20",
+"       \ "-fmessage-length", "99",
+"       \ "-stack-protector", "1",
+"       \ "-fcxx-exceptions",
+"       \ "-fexceptions",
+"       \ "-fmax-type-align=16",
+"       \ "-fdiagnostics-show-option"]
 "      \ "-mdisable-fp-elim",
 "      \ "-masm-verbose",
 "      \ "-munwind-tables",
