@@ -31,7 +31,7 @@ set copyindent    " Make autoindent use the same chars as prev line
 """ UI config
 "
 filetype indent on  " load filetype-specific indent files
-set cursorline      " highlight current line
+"set cursorline      " highlight current line
 set lazyredraw      " redraw only when we need to
 set number          " show line numbers
 set showmatch       " highlight matching [{()}]
@@ -106,6 +106,11 @@ autocmd BufRead,BufNewFile *.adoc
 """ Packet manager :: DEIN """
 """"""""""""""""""""""""""""""
 
+""" HACK for vim-fish
+if &shell =~# 'fish$'
+    set shell=sh
+  endif
+
 if &compatible
   set nocompatible " Be improved
 endif
@@ -141,12 +146,21 @@ if dein#load_state('~/.dein')
   call dein#add('Shougo/neosnippet')
   call dein#add('Shougo/neosnippet-snippets')
 
-  call dein#add('tpope/vim-fugitive') " Git
+  " call dein#add('tpope/vim-fugitive') " Git
 
   call dein#add('MattesGroeger/vim-bookmarks') " Bookmarks
 
+  " call dein#add('rust-lang/rust.vim')
+  " call dein#add('sebastianmarkow/deoplete-rust')
+
+  call dein#add('peterhoeg/vim-qml')
+  call dein#add('dag/vim-fish')
+
+  " call dein#add('autozimu/LanguageClient-neovim') " cquery client
+
   " Required:
   call dein#end()
+
   call dein#save_state()
 endif
 
@@ -169,8 +183,8 @@ endif
 """ Deoplete """
 "
 let g:deoplete#enable_at_startup = 1
-let g:deoplete#sources#clang#libclang_path='/usr/local/Cellar/llvm/5.0.0/lib/libclang.dylib'
-let g:deoplete#sources#clang#clang_header='/usr/local/Cellar/llvm/5.0.0/lib/clang/5.0.0/include/'
+let g:deoplete#sources#clang#libclang_path='/usr/local/Cellar/llvm/HEAD-2cf5f8c/lib/libclang.dylib'
+let g:deoplete#sources#clang#clang_header='/usr/local/Cellar/llvm/HEAD-2cf5f8c/lib/clang/7.0.0/include/'
 let g:deoplete#sources#clang#std={'cpp':'c++17'}
 let g:deoplete#sources#clang#flags = [
       \ "-cc1",
@@ -180,7 +194,7 @@ let g:deoplete#sources#clang#flags = [
       \ "-mthread-model", "posix",
       \ "-dwarf-column-info",
       \ "-debugger-tuning=lldb",
-      \ "-resource-dir", "/usr/local/Cellar/llvm/5.0.0/lib/clang/5.0.0",
+      \ "-resource-dir", "/usr/local/Cellar/llvm/HEAD-2cf5f8c/lib/clang/7.0.0",
       \ "-stdlib=libc++",
       \ "-fdeprecated-macro",
       \ "-ferror-limit", "20",
@@ -197,11 +211,20 @@ let g:deoplete#sources#clang#flags = [
 "      \ "-target-linker-version", "278.4"
 "      \ "-fcolor-diagnostics",
 
+let g:deoplete#sources#rust#racer_binary='/Users/khranovs/.cargo/bin/racer'
+let g:deoplete#sources#rust#rust_source_path='/Users/khranovs/ExtProjects/rust-src/src'
+let g:deoplete#sources#rust#show_duplicates=1
+
+autocmd FileType rs nnoremap <buffer><Leader>cf :<C-u>RustFmt<CR>
+autocmd FileType rs vnoremap <buffer><Leader>cf :RustFmtRange<CR>
+
 """ Color scheme """
 "
 set termguicolors
 set background=dark
 colorscheme solarized
+
+highlight Pmenu guibg=brown gui=bold
 
 """ FZF """
 "
@@ -211,7 +234,7 @@ nmap <C-p> :Files<CR>
 
 """ clang format """
 "
-let g:clang_format#code_style = "Chromium"
+let g:clang_format#code_style = "WebKit"
 let g:clang_format#style_options = {
       \ "AccessModifierOffset" : -2,
       \ "AllowShortIfStatementsOnASingleLine" : "true",
@@ -220,12 +243,25 @@ let g:clang_format#style_options = {
       \ "CompactNamespaces" : "false",
       \ "Cpp11BracedListStyle" : "true",
       \ "FixNamespaceComments" : "true",
+      \ "BraceWrapping": {
+      \   "AfterClass": "true",
+      \   "AfterControlStatement": "true",
+      \   "AfterEnum": "true",
+      \   "AfterFunction": "true",
+      \   "AfterNamespace": "false",
+      \   "AfterStruct": "true",
+      \   "AfterUnion": "true",
+      \   "BeforeCatch": "true",
+      \   "BeforeElse": "true",
+      \   "IndentBraces": "false"
+      \ },
+      \ "PointerAlignment": "Left"
       \}
       "\ "SortUsingDeclarations" : "true",
 let g:clang_format#auto_format_on_insert_leave = 0
 autocmd FileType c,cpp,objc nnoremap <buffer><Leader>cf :<C-u>ClangFormat<CR>
 autocmd FileType c,cpp,objc vnoremap <buffer><Leader>cf :ClangFormat<CR>
-autocmd FileType c,cpp,objc map <buffer><Leader>x <Plug>(operator-clang-format)
+" autocmd FileType c,cpp,objc map <buffer><Leader>x <Plug>(operator-clang-format)
 
 """ Tagbar (ctags browser)
 "
@@ -236,8 +272,8 @@ nmap <F8> :TagbarToggle<CR>
 let g:ale_enabled = 1
 " " let g:airline#extensions#ale#enabled = 0
 " " let g:ale_change_sign_column_color = 1
-let g:ale_completion_enabled = 0
-" let g:ale_lint_delay = 500
+let g:ale_completion_enabled = 1
+let g:ale_lint_delay = 500
 let g:ale_lint_on_enter = 1
 let g:ale_lint_on_fileType_changed = 1
 let g:ale_lint_on_save = 1
@@ -247,11 +283,12 @@ let g:ale_linters = {
       \}
 let g:ale_linters_explicit = 1
 let g:ale_set_quickfix = 1
-let g:ale_cpp_clang_executable = "/usr/local/opt/llvm/bin/clang++"
+let g:ale_cpp_clang_executable = "clang++7"
 let g:ale_cpp_clang_options = '-std=c++17 -Wall -Wextra -Werror -Wshadow -Werror -pedantic -pedantic-errors -Wshorten-64-to-32 -Wfloat-equal -fstrict-aliasing -Wstring-conv'
-" let g:ale_cpp_clangcheck_executable = '/usr/local/opt/llvm/bin/clang-check'
-" let g:ale_cpp_clangcheck_options = '-p ./build'
+let g:ale_cpp_clangcheck_executable = '/usr/local/opt/llvm/bin/clang-check'
+let g:ale_cpp_clangcheck_options = '-p ./build'
 
+"
 """ NERD """
 "
 " Close NERD if it last window
@@ -281,23 +318,17 @@ if has('conceal')
   set conceallevel=2 concealcursor=niv
 endif
 
-
-
-"   call dein#add('vim-airline/vim-airline')
-"   call dein#add('vim-airline/vim-airline-themes')
-" 
-"   " call dein#add('sjl/gundo.vim')      " gundo doesn't work!!!
-"   
-"   call dein#add('scrooloose/nerdtree')  " NerdTree
-"   call dein#add('Xuyuanp/nerdtree-git-plugin')
-" 
-"   call dein#add('skywind3000/asyncrun.vim')
-" 
-" " nnoremap <leader>u :GundoToggle<CR> " toggle gundo
-" 
-" " Delete trailing white space and Dos-returns and to expand tabs to spaces.
-" nnoremap <Leader>t :set et<CR>:retab!<CR>:%s/[\r \t]\+$//<CR>
+""" LanguageClient """
 "
+" let g:LanguageClient_serverCommands = {
+" \ 'cpp': ['/Users/khranovs/ExtProjects/cquery/build/release/bin/cquery', '--log-file=/tmp/cq.log']
+" \ }
+" let g:LanguageClient_loadSettings = 1
+" let g:LanguageClient_loggingLevel = 'DEBUG'
+" Use an absolute configuration path if you want system-wide settings
+" let g:LanguageClient_settingsPath = '/home/yourusername/.config/nvim/settings.json'
+
+
 """ Put these lines at the very end of your vimrc file.
 "
 """ Load all plugins now.
