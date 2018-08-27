@@ -127,36 +127,30 @@ if dein#load_state('~/.dein')
   call dein#add('~/.dein/repos/github.com/Shougo/dein.vim')
 
   call dein#add('Shougo/deoplete.nvim') " Completion engine
+
   call dein#add('zchee/deoplete-clang') " clang-driven completion for C++
-
-  call dein#add('altercation/vim-colors-solarized') " Color scheme: solarized
-
-  call dein#add('/usr/local/opt/fzf') " Fuzzy finder
-  call dein#add('junegunn/fzf.vim')
-
-  call dein#add('kana/vim-operator-user')
   call dein#add('rhysd/vim-clang-format')
+  call dein#add('octol/vim-cpp-enhanced-highlight')
 
-  call dein#add('majutsushi/tagbar')  " Tag bar
-
-  call dein#add('w0rp/ale') " Async Linter Engine
-
-  call dein#add('scrooloose/nerdtree')  " NerdTree
-
-  call dein#add('Shougo/neosnippet')
-  call dein#add('Shougo/neosnippet-snippets')
-
-  " call dein#add('tpope/vim-fugitive') " Git
-
-  call dein#add('MattesGroeger/vim-bookmarks') " Bookmarks
-
-  " call dein#add('rust-lang/rust.vim')
-  " call dein#add('sebastianmarkow/deoplete-rust')
+  call dein#add('sebastianmarkow/deoplete-rust')
+  call dein#add('rust-lang/rust.vim')
 
   call dein#add('peterhoeg/vim-qml')
   call dein#add('dag/vim-fish')
 
-  " call dein#add('autozimu/LanguageClient-neovim') " cquery client
+  " call dein#add('w0rp/ale') " Async Linter Engine
+
+  call dein#add('morhetz/gruvbox') "Color scheme: gruvbox
+
+  call dein#add('/usr/local/opt/fzf') " Fuzzy finder
+  call dein#add('junegunn/fzf.vim')
+
+  call dein#add('scrooloose/nerdtree')
+
+  call dein#add('airblade/vim-gitgutter')
+  call dein#add('MattesGroeger/vim-bookmarks')
+
+  call dein#add('wakatime/vim-wakatime')
 
   " Required:
   call dein#end()
@@ -183,8 +177,8 @@ endif
 """ Deoplete """
 "
 let g:deoplete#enable_at_startup = 1
-let g:deoplete#sources#clang#libclang_path='/usr/local/Cellar/llvm/HEAD-2cf5f8c/lib/libclang.dylib'
-let g:deoplete#sources#clang#clang_header='/usr/local/Cellar/llvm/HEAD-2cf5f8c/lib/clang/7.0.0/include/'
+let g:deoplete#sources#clang#libclang_path='/usr/local/Cellar/llvm/HEAD-3638207/lib/libclang.dylib'
+let g:deoplete#sources#clang#clang_header='/usr/local/Cellar/llvm/HEAD-3638207/lib/clang/8.0.0/include/'
 let g:deoplete#sources#clang#std={'cpp':'c++17'}
 let g:deoplete#sources#clang#flags = [
       \ "-cc1",
@@ -194,7 +188,7 @@ let g:deoplete#sources#clang#flags = [
       \ "-mthread-model", "posix",
       \ "-dwarf-column-info",
       \ "-debugger-tuning=lldb",
-      \ "-resource-dir", "/usr/local/Cellar/llvm/HEAD-2cf5f8c/lib/clang/7.0.0",
+      \ "-resource-dir", "/usr/local/Cellar/llvm/HEAD-3638207/lib/clang/8.0.0",
       \ "-stdlib=libc++",
       \ "-fdeprecated-macro",
       \ "-ferror-limit", "20",
@@ -213,18 +207,25 @@ let g:deoplete#sources#clang#flags = [
 
 let g:deoplete#sources#rust#racer_binary='/Users/khranovs/.cargo/bin/racer'
 let g:deoplete#sources#rust#rust_source_path='/Users/khranovs/ExtProjects/rust-src/src'
-let g:deoplete#sources#rust#show_duplicates=1
+let g:deoplete#sources#rust#show_duplicates=0
 
 autocmd FileType rs nnoremap <buffer><Leader>cf :<C-u>RustFmt<CR>
 autocmd FileType rs vnoremap <buffer><Leader>cf :RustFmtRange<CR>
 
 """ Color scheme """
-"
 set termguicolors
 set background=dark
-colorscheme solarized
+colorscheme gruvbox
 
 highlight Pmenu guibg=brown gui=bold
+
+"""""""""""""""""""""
+""" C++ Highlight """
+"""""""""""""""""""""
+let g:cpp_class_scope_highlight = 1
+let g:cpp_member_variable_highlight = 1
+let g:cpp_class_decl_highlight = 1
+let g:cpp_experimental_template_highlight = 1
 
 """ FZF """
 "
@@ -259,75 +260,19 @@ let g:clang_format#style_options = {
       \}
       "\ "SortUsingDeclarations" : "true",
 let g:clang_format#auto_format_on_insert_leave = 0
-autocmd FileType c,cpp,objc nnoremap <buffer><Leader>cf :<C-u>ClangFormat<CR>
-autocmd FileType c,cpp,objc vnoremap <buffer><Leader>cf :ClangFormat<CR>
-" autocmd FileType c,cpp,objc map <buffer><Leader>x <Plug>(operator-clang-format)
+autocmd FileType c,cpp nnoremap <buffer><Leader>cf :<C-u>ClangFormat<CR>
+autocmd FileType c,cpp vnoremap <buffer><Leader>cf :ClangFormat<CR>
 
-""" Tagbar (ctags browser)
-"
-nmap <F8> :TagbarToggle<CR>
-
-""" ALE """
-"
-let g:ale_enabled = 1
-" " let g:airline#extensions#ale#enabled = 0
-" " let g:ale_change_sign_column_color = 1
-let g:ale_completion_enabled = 1
-let g:ale_lint_delay = 500
-let g:ale_lint_on_enter = 1
-let g:ale_lint_on_fileType_changed = 1
-let g:ale_lint_on_save = 1
-let g:ale_lint_on_text_changed = "always"
-let g:ale_linters = {
-      \ "cpp" : ["clang"],
-      \}
-let g:ale_linters_explicit = 1
-let g:ale_set_quickfix = 1
-let g:ale_cpp_clang_executable = "clang++7"
-let g:ale_cpp_clang_options = '-std=c++17 -Wall -Wextra -Werror -Wshadow -Werror -pedantic -pedantic-errors -Wshorten-64-to-32 -Wfloat-equal -fstrict-aliasing -Wstring-conv'
-let g:ale_cpp_clangcheck_executable = '/usr/local/opt/llvm/bin/clang-check'
-let g:ale_cpp_clangcheck_options = '-p ./build'
-
-"
 """ NERD """
 "
 " Close NERD if it last window
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 map <F5> :NERDTreeToggle<CR>
 
-""" Snippets """
-"
-" Plugin key-mappings.
-" Note: It must be "imap" and "smap".  It uses <Plug> mappings.
-imap <C-k>     <Plug>(neosnippet_expand_or_jump)
-smap <C-k>     <Plug>(neosnippet_expand_or_jump)
-xmap <C-k>     <Plug>(neosnippet_expand_target)
-
-" SuperTab like snippets behavior.
-" Note: It must be "imap" and "smap".  It uses <Plug> mappings.
-imap <C-k>     <Plug>(neosnippet_expand_or_jump)
-"imap <expr><TAB>
-" \ pumvisible() ? "\<C-n>" :
-" \ neosnippet#expandable_or_jumpable() ?
-" \    "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
-smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
-\ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
-
 " For conceal markers.
 if has('conceal')
   set conceallevel=2 concealcursor=niv
 endif
-
-""" LanguageClient """
-"
-" let g:LanguageClient_serverCommands = {
-" \ 'cpp': ['/Users/khranovs/ExtProjects/cquery/build/release/bin/cquery', '--log-file=/tmp/cq.log']
-" \ }
-" let g:LanguageClient_loadSettings = 1
-" let g:LanguageClient_loggingLevel = 'DEBUG'
-" Use an absolute configuration path if you want system-wide settings
-" let g:LanguageClient_settingsPath = '/home/yourusername/.config/nvim/settings.json'
-
 
 """ Put these lines at the very end of your vimrc file.
 "
