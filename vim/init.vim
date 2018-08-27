@@ -172,8 +172,8 @@ endif
 """ Deoplete """
 "
 let g:deoplete#enable_at_startup = 1
-let g:deoplete#sources#clang#libclang_path='/usr/lib/llvm-5.0/lib/libclang-5.0.so.1'
-let g:deoplete#sources#clang#clang_header='/usr/lib/llvm-5.0/lib/clang/5.0.0/include/'
+let g:deoplete#sources#clang#libclang_path='/usr/lib/llvm-6.0/lib/libclang-6.0.so.1'
+let g:deoplete#sources#clang#clang_header='/usr/lib/llvm-6.0/lib/clang/6.0.0/include/'
 let g:deoplete#sources#clang#std={'cpp':'c++17'}
 " let g:deoplete#sources#clang#flags = [
 "       \ "-cc1",
