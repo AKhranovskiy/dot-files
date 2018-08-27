@@ -132,9 +132,6 @@ if dein#load_state('~/.dein')
   call dein#add('rhysd/vim-clang-format')
   call dein#add('octol/vim-cpp-enhanced-highlight')
 
-  call dein#add('sebastianmarkow/deoplete-rust')
-  call dein#add('rust-lang/rust.vim')
-
   call dein#add('peterhoeg/vim-qml')
   call dein#add('dag/vim-fish')
 
@@ -202,13 +199,6 @@ let g:deoplete#sources#clang#std={'cpp':'c++17'}
 "      \ "-target-cpu", "penryn"
 "      \ "-target-linker-version", "278.4"
 "      \ "-fcolor-diagnostics",
-
-let g:deoplete#sources#rust#racer_binary='/Users/khranovs/.cargo/bin/racer'
-let g:deoplete#sources#rust#rust_source_path='/Users/khranovs/ExtProjects/rust-src/src'
-let g:deoplete#sources#rust#show_duplicates=0
-
-autocmd FileType rs nnoremap <buffer><Leader>cf :<C-u>RustFmt<CR>
-autocmd FileType rs vnoremap <buffer><Leader>cf :RustFmtRange<CR>
 
 """ Color scheme """
 set termguicolors
