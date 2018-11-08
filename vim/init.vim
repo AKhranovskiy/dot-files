@@ -101,6 +101,8 @@ autocmd BufRead,BufNewFile *.adoc
       \ textwidth=100 wrap formatoptions=tcqn
       \ formatlistpat=^\\s*\\d\\+\\.\\s\\+\\\\|^\\s*<\\d\\+>\\s\\+\\\\|^\\s*[a-zA-Z.]\\.\\s\\+\\\\|^\\s*[ivxIVX]\\+\\.\\s\\+
       \ comments=s1:/*,ex:*/,://,b:#,:%,:XCOMM,fb:-,fb:*,fb:+,fb:.,fb:>
+""" CMakeAddon syntax
+autocmd BufNewFile,BufRead CMakeAddon.txt set syntax=cmake
 
 """"""""""""""""""""""""""""""
 """ Packet manager :: DEIN """
@@ -135,22 +137,38 @@ if dein#load_state('~/.dein')
   call dein#add('sebastianmarkow/deoplete-rust')
   call dein#add('rust-lang/rust.vim')
 
+  call dein#add('nvie/vim-flake8')
+
   call dein#add('peterhoeg/vim-qml')
   call dein#add('dag/vim-fish')
+  call dein#add('pboettch/vim-cmake-syntax')
+
+  call dein#add('carlitux/deoplete-ternjs')
+  call dein#add('pangloss/vim-javascript')
+
+  call dein#add('autozimu/LanguageClient-neovim')
 
   " call dein#add('w0rp/ale') " Async Linter Engine
 
   call dein#add('morhetz/gruvbox') "Color scheme: gruvbox
+  call dein#add('fenetikm/falcon')
+  call dein#add('andreypopp/vim-colors-plain')
 
   call dein#add('/usr/local/opt/fzf') " Fuzzy finder
   call dein#add('junegunn/fzf.vim')
 
   call dein#add('scrooloose/nerdtree')
+  call dein#add('scrooloose/nerdcommenter')
+
+  call dein#add('tpope/vim-vinegar') " Extend file browsing
 
   call dein#add('airblade/vim-gitgutter')
   call dein#add('MattesGroeger/vim-bookmarks')
+  call dein#add('tpope/vim-fugitive')
 
   call dein#add('wakatime/vim-wakatime')
+
+  call dein#add('easymotion/vim-easymotion')
 
   " Required:
   call dein#end()
@@ -177,8 +195,8 @@ endif
 """ Deoplete """
 "
 let g:deoplete#enable_at_startup = 1
-let g:deoplete#sources#clang#libclang_path='/usr/local/Cellar/llvm/HEAD-3638207/lib/libclang.dylib'
-let g:deoplete#sources#clang#clang_header='/usr/local/Cellar/llvm/HEAD-3638207/lib/clang/8.0.0/include/'
+let g:deoplete#sources#clang#libclang_path='/usr/local/Cellar/llvm/HEAD-ad1103e/lib/libclang.dylib'
+let g:deoplete#sources#clang#clang_header='/usr/local/Cellar/llvm/HEAD-ad1103e/lib/clang/8.0.0/include/'
 let g:deoplete#sources#clang#std={'cpp':'c++17'}
 let g:deoplete#sources#clang#flags = [
       \ "-cc1",
@@ -188,7 +206,7 @@ let g:deoplete#sources#clang#flags = [
       \ "-mthread-model", "posix",
       \ "-dwarf-column-info",
       \ "-debugger-tuning=lldb",
-      \ "-resource-dir", "/usr/local/Cellar/llvm/HEAD-3638207/lib/clang/8.0.0",
+      \ "-resource-dir", "/usr/local/Cellar/llvm/HEAD-ad1103e/lib/clang/8.0.0",
       \ "-stdlib=libc++",
       \ "-fdeprecated-macro",
       \ "-ferror-limit", "20",
@@ -198,12 +216,6 @@ let g:deoplete#sources#clang#flags = [
       \ "-fexceptions",
       \ "-fmax-type-align=16",
       \ "-fdiagnostics-show-option"]
-"      \ "-mdisable-fp-elim",
-"      \ "-masm-verbose",
-"      \ "-munwind-tables",
-"      \ "-target-cpu", "penryn"
-"      \ "-target-linker-version", "278.4"
-"      \ "-fcolor-diagnostics",
 
 let g:deoplete#sources#rust#racer_binary='/Users/khranovs/.cargo/bin/racer'
 let g:deoplete#sources#rust#rust_source_path='/Users/khranovs/ExtProjects/rust-src/src'
@@ -215,7 +227,7 @@ autocmd FileType rs vnoremap <buffer><Leader>cf :RustFmtRange<CR>
 """ Color scheme """
 set termguicolors
 set background=dark
-colorscheme gruvbox
+colorscheme falcon
 
 highlight Pmenu guibg=brown gui=bold
 
@@ -235,33 +247,51 @@ nmap <C-p> :Files<CR>
 
 """ clang format """
 "
-let g:clang_format#code_style = "WebKit"
+let g:clang_format#code_style = "LLVM"
 let g:clang_format#style_options = {
       \ "AccessModifierOffset" : -2,
       \ "AllowShortIfStatementsOnASingleLine" : "true",
-      \ "AlwaysBreakTemplateDeclarations" : "true",
-      \ "Standard" : "C++11",
+      \ "AllowShortLoopsOnASingleLine" : "true",
+      \ "ColumnLimit" : 100,
       \ "CompactNamespaces" : "false",
       \ "Cpp11BracedListStyle" : "true",
       \ "FixNamespaceComments" : "true",
-      \ "BraceWrapping": {
-      \   "AfterClass": "true",
-      \   "AfterControlStatement": "true",
-      \   "AfterEnum": "true",
-      \   "AfterFunction": "true",
-      \   "AfterNamespace": "false",
-      \   "AfterStruct": "true",
-      \   "AfterUnion": "true",
-      \   "BeforeCatch": "true",
-      \   "BeforeElse": "true",
-      \   "IndentBraces": "false"
-      \ },
-      \ "PointerAlignment": "Left"
+      \ "PointerAlignment": "Left",
+      \ "SortUsingDeclarations" : "true",
+      \ "Standard" : "C++11"
       \}
-      "\ "SortUsingDeclarations" : "true",
+      " \ "BraceWrapping": {
+      " \   "AfterClass": "false",
+      " \   "AfterControlStatement": "false",
+      " \   "AfterEnum": "false",
+      " \   "AfterFunction": "false",
+      " \   "AfterNamespace": "false",
+      " \   "AfterStruct": "false",
+      " \   "AfterUnion": "false",
+      " \   "BeforeCatch": "true",
+      " \   "BeforeElse": "false",
+      " \   "IndentBraces": "false"
+      " \ },
 let g:clang_format#auto_format_on_insert_leave = 0
 autocmd FileType c,cpp nnoremap <buffer><Leader>cf :<C-u>ClangFormat<CR>
 autocmd FileType c,cpp vnoremap <buffer><Leader>cf :ClangFormat<CR>
+
+""" Language Server
+let g:LanguageClient_serverCommands = {
+    \ 'cpp': ['cquery', "--init={\"index\": {\"threads\": 2}}", '--log-file=/tmp/cq.log'],
+    \ 'c': ['cquery', '--log-file=/tmp/cq.log'],
+    \ }
+
+let g:LanguageClient_loadSettings = 1 " Use an absolute configuration path if you want system-wide settings
+let g:LanguageClient_settingsPath = '/Users/khranovs/.config/nvim/settings.json'
+set completefunc=LanguageClient#complete
+set formatexpr=LanguageClient_textDocument_rangeFormatting()
+
+nnoremap <silent> gh :call LanguageClient#textDocument_hover()<CR>
+nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+nnoremap <silent> gr :call LanguageClient#textDocument_references()<CR>
+nnoremap <silent> gs :call LanguageClient#textDocument_documentSymbol()<CR>
+nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
 
 """ NERD """
 "
