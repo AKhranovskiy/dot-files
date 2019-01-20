@@ -198,8 +198,8 @@ endif
 """ Deoplete """
 "
 let g:deoplete#enable_at_startup = 1
-let g:deoplete#sources#clang#libclang_path='/usr/local/Cellar/llvm/HEAD-ad1103e/lib/libclang.dylib'
-let g:deoplete#sources#clang#clang_header='/usr/local/Cellar/llvm/HEAD-ad1103e/lib/clang/8.0.0/include/'
+let g:deoplete#sources#clang#libclang_path='/usr/local/Cellar/llvm/HEAD-eebe489/lib/libclang.dylib'
+let g:deoplete#sources#clang#clang_header='/usr/local/Cellar/llvm/HEAD-eebe489/lib/clang/8.0.0/include/'
 let g:deoplete#sources#clang#std={'cpp':'c++17'}
 let g:deoplete#sources#clang#flags = [
       \ "-cc1",
@@ -209,7 +209,7 @@ let g:deoplete#sources#clang#flags = [
       \ "-mthread-model", "posix",
       \ "-dwarf-column-info",
       \ "-debugger-tuning=lldb",
-      \ "-resource-dir", "/usr/local/Cellar/llvm/HEAD-ad1103e/lib/clang/8.0.0",
+      \ "-resource-dir", "/usr/local/Cellar/llvm/HEAD-eebe489/lib/clang/8.0.0",
       \ "-stdlib=libc++",
       \ "-fdeprecated-macro",
       \ "-ferror-limit", "20",
@@ -250,6 +250,7 @@ nmap <C-p> :Files<CR>
 
 """ clang format """
 "
+let g:clang_format#command = "/usr/local/Cellar/llvm/HEAD-eebe489/bin/clang-format"
 let g:clang_format#code_style = "LLVM"
 let g:clang_format#style_options = {
       \ "AccessModifierOffset" : -2,
