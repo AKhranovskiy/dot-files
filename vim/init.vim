@@ -135,6 +135,7 @@ if dein#load_state('~/.dein')
   call dein#add('octol/vim-cpp-enhanced-highlight')
 
   call dein#add('sebastianmarkow/deoplete-rust')
+  " call dein#add('sebastianmarkow/deoplete-rust')
   call dein#add('rust-lang/rust.vim')
 
   call dein#add('nvie/vim-flake8')
