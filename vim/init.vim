@@ -173,6 +173,11 @@ if dein#load_state('~/.dein')
   call dein#add('easymotion/vim-easymotion')
   call dein#add('itchyny/lightline.vim')
 
+  " Scala
+  call dein#add('ensime/ensime-vim')
+  call dein#add('derekwyatt/vim-scala')
+  call dein#add('neomake/neomake')
+
   " Required:
   call dein#end()
 
@@ -198,6 +203,8 @@ endif
 """ Deoplete """
 "
 let g:deoplete#enable_at_startup = 1
+
+""" C++
 let g:deoplete#sources#clang#libclang_path='/usr/local/Cellar/llvm/HEAD-eebe489/lib/libclang.dylib'
 let g:deoplete#sources#clang#clang_header='/usr/local/Cellar/llvm/HEAD-eebe489/lib/clang/8.0.0/include/'
 let g:deoplete#sources#clang#std={'cpp':'c++17'}
@@ -219,6 +226,32 @@ let g:deoplete#sources#clang#flags = [
       \ "-fexceptions",
       \ "-fmax-type-align=16",
       \ "-fdiagnostics-show-option"]
+
+""" Scala
+let g:deoplete#sources={} 
+let g:deoplete#sources._=['buffer', 'member', 'tag', 'file', 'omni', 'ultisnips'] 
+let g:deoplete#omni#input_patterns={} 
+let g:deoplete#omni#input_patterns.scala='[^. *\t]\.\w*'
+
+"Linting with neomake
+let g:neomake_sbt_maker = {
+      \ 'exe': 'sbt',
+      \ 'args': ['-Dsbt.log.noformat=true', 'compile'],
+      \ 'append_file': 0,
+      \ 'auto_enabled': 1,
+      \ 'output_stream': 'stdout',
+      \ 'errorformat':
+          \ '%E[%trror]\ %f:%l:\ %m,' .
+            \ '%-Z[error]\ %p^,' .
+            \ '%-C%.%#,' .
+            \ '%-G%.%#'
+     \ }
+
+let g:neomake_enabled_makers = ['sbt']
+let g:neomake_verbose=3
+
+" Neomake on text change
+autocmd FileType scala InsertLeave,TextChanged * update | Neomake! sbt
 
 """"""""""""""""""""""""""""""
 """     Language Server    """
