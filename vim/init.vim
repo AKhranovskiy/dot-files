@@ -134,8 +134,8 @@ if dein#load_state('~/.dein')
   call dein#add('rhysd/vim-clang-format')
   call dein#add('octol/vim-cpp-enhanced-highlight')
 
-  call dein#add('sebastianmarkow/deoplete-rust')
   " call dein#add('sebastianmarkow/deoplete-rust')
+  call dein#add('autozimu/LanguageClient-neovim')
   call dein#add('rust-lang/rust.vim')
 
   call dein#add('nvie/vim-flake8')
@@ -147,7 +147,6 @@ if dein#load_state('~/.dein')
   call dein#add('carlitux/deoplete-ternjs')
   call dein#add('pangloss/vim-javascript')
 
-  call dein#add('autozimu/LanguageClient-neovim')
   call dein#add('python-mode/python-mode')
   call dein#add('zchee/deoplete-jedi')
 
@@ -221,12 +220,42 @@ let g:deoplete#sources#clang#flags = [
       \ "-fmax-type-align=16",
       \ "-fdiagnostics-show-option"]
 
-let g:deoplete#sources#rust#racer_binary='/Users/khranovs/.cargo/bin/racer'
-let g:deoplete#sources#rust#rust_source_path='/Users/khranovs/ExtProjects/rust-src/src'
-let g:deoplete#sources#rust#show_duplicates=0
+""""""""""""""""""""""""""""""
+"""     Language Server    """
+""""""""""""""""""""""""""""""
+set hidden
 
-autocmd FileType rs nnoremap <buffer><Leader>cf :<C-u>RustFmt<CR>
-autocmd FileType rs vnoremap <buffer><Leader>cf :RustFmtRange<CR>
+let g:LanguageClient_serverCommands = {
+    \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
+    \ }
+
+nnoremap <F7> :call LanguageClient_contextMenu()<CR>
+""" Language Server
+" let g:LanguageClient_serverCommands = {
+"     \ 'cpp': ['cquery', "--init={\"index\": {\"threads\": 2}}", '--log-file=/tmp/cq.log'],
+"     \ 'c': ['cquery', '--log-file=/tmp/cq.log'],
+"     \ }
+" 
+" let g:LanguageClient_loadSettings = 1 " Use an absolute configuration path if you want system-wide settings
+" let g:LanguageClient_settingsPath = '/Users/khranovs/.config/nvim/settings.json'
+" set completefunc=LanguageClient#complete
+" set formatexpr=LanguageClient_textDocument_rangeFormatting()
+" 
+" nnoremap <silent> gh :call LanguageClient#textDocument_hover()<CR>
+" nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+" nnoremap <silent> gr :call LanguageClient#textDocument_references()<CR>
+" nnoremap <silent> gs :call LanguageClient#textDocument_documentSymbol()<CR>
+" nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
+" Or map each action separately
+" nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
+" nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+" nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
+" let g:deoplete#sources#rust#racer_binary='/Users/khranovs/.cargo/bin/racer'
+" let g:deoplete#sources#rust#rust_source_path='/Users/khranovs/ExtProjects/rust-src/src'
+" let g:deoplete#sources#rust#show_duplicates=0
+" 
+" autocmd FileType rs nnoremap <buffer><Leader>cf :<C-u>RustFmt<CR>
+" autocmd FileType rs vnoremap <buffer><Leader>cf :RustFmtRange<CR>
 
 """ Color scheme """
 set termguicolors
@@ -281,22 +310,6 @@ let g:clang_format#auto_format_on_insert_leave = 0
 autocmd FileType c,cpp nnoremap <buffer><Leader>cf :<C-u>ClangFormat<CR>
 autocmd FileType c,cpp vnoremap <buffer><Leader>cf :ClangFormat<CR>
 
-""" Language Server
-let g:LanguageClient_serverCommands = {
-    \ 'cpp': ['cquery', "--init={\"index\": {\"threads\": 2}}", '--log-file=/tmp/cq.log'],
-    \ 'c': ['cquery', '--log-file=/tmp/cq.log'],
-    \ }
-
-let g:LanguageClient_loadSettings = 1 " Use an absolute configuration path if you want system-wide settings
-let g:LanguageClient_settingsPath = '/Users/khranovs/.config/nvim/settings.json'
-set completefunc=LanguageClient#complete
-set formatexpr=LanguageClient_textDocument_rangeFormatting()
-
-nnoremap <silent> gh :call LanguageClient#textDocument_hover()<CR>
-nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
-nnoremap <silent> gr :call LanguageClient#textDocument_references()<CR>
-nnoremap <silent> gs :call LanguageClient#textDocument_documentSymbol()<CR>
-nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
 
 """ NERD """
 "
