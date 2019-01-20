@@ -277,6 +277,7 @@ let g:cpp_experimental_template_highlight = 1
 nmap <Leader>ft :Tags<CR>
 nmap <Leader>fbt :BTags<CR>
 nmap <C-p> :Files<CR>
+nmap <F8> :Buffers<CR>
 
 """ clang format """
 "
@@ -316,6 +317,7 @@ autocmd FileType c,cpp vnoremap <buffer><Leader>cf :ClangFormat<CR>
 " Close NERD if it last window
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 map <F5> :NERDTreeToggle<CR>
+map <F4> :NERDTreeFind<CR>
 
 " For conceal markers.
 if has('conceal')
