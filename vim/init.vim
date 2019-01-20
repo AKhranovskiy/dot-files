@@ -147,6 +147,8 @@ if dein#load_state('~/.dein')
   call dein#add('pangloss/vim-javascript')
 
   call dein#add('autozimu/LanguageClient-neovim')
+  call dein#add('python-mode/python-mode')
+  call dein#add('zchee/deoplete-jedi')
 
   " call dein#add('w0rp/ale') " Async Linter Engine
 
