@@ -171,6 +171,7 @@ if dein#load_state('~/.dein')
   call dein#add('wakatime/vim-wakatime')
 
   call dein#add('easymotion/vim-easymotion')
+  call dein#add('itchyny/lightline.vim')
 
   " Required:
   call dein#end()
