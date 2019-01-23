@@ -79,13 +79,11 @@ set undodir=/tmp//,.
 """""""""""""""
 """ Hotkeys """
 """""""""""""""
-"
+map <F2> :w<CR>
+
 """ Buffers
 map <C-l> :ls<CR>       " List buffers
 map <C-q> :bd %<CR>     " Close current buffer
-""" Reformatting
-nnoremap <Leader>r gq}  " Reformat paragraphs and list
-
 
 """"""""""""""""""""
 """ File configs """
@@ -294,8 +292,6 @@ nnoremap <F7> :call LanguageClient_contextMenu()<CR>
 set termguicolors
 set background=dark
 colorscheme falcon
-
-highlight Pmenu guibg=brown gui=bold
 
 """""""""""""""""""""
 """ C++ Highlight """
