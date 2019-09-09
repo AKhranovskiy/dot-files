@@ -31,7 +31,7 @@ set copyindent    " Make autoindent use the same chars as prev line
 """ UI config
 "
 filetype indent on  " load filetype-specific indent files
-"set cursorline      " highlight current line
+set cursorline      " highlight current line
 set lazyredraw      " redraw only when we need to
 set number          " show line numbers
 set showmatch       " highlight matching [{()}]
@@ -67,6 +67,8 @@ nnoremap E $
 " $/^ doesn't do anything
 nnoremap $ <nop>
 nnoremap ^ <nop>
+
+set nostartofline  " Do not jump to first column in vertical selection
 
 """ Directories
 "
@@ -128,31 +130,33 @@ if dein#load_state('~/.dein')
 
   call dein#add('Shougo/deoplete.nvim') " Completion engine
 
+  " Language Server
+  call dein#add('neoclide/coc.nvim', {'build': './install.sh nightly'})
+
   call dein#add('zchee/deoplete-clang') " clang-driven completion for C++
   call dein#add('rhysd/vim-clang-format')
   call dein#add('octol/vim-cpp-enhanced-highlight')
 
-  " call dein#add('sebastianmarkow/deoplete-rust')
-  call dein#add('autozimu/LanguageClient-neovim')
-  call dein#add('rust-lang/rust.vim')
-
-  call dein#add('nvie/vim-flake8')
+  "call dein#add('sebastianmarkow/deoplete-rust')
+  "call dein#add('autozimu/LanguageClient-neovim', {'build': './install.sh'})
+  "call dein#add('rust-lang/rust.vim')
 
   call dein#add('peterhoeg/vim-qml')
   call dein#add('dag/vim-fish')
   call dein#add('pboettch/vim-cmake-syntax')
 
-  call dein#add('carlitux/deoplete-ternjs')
-  call dein#add('pangloss/vim-javascript')
+  "call dein#add('carlitux/deoplete-ternjs')
+  "call dein#add('pangloss/vim-javascript')
 
   call dein#add('python-mode/python-mode')
+  call dein#add('nvie/vim-flake8')
   call dein#add('zchee/deoplete-jedi')
 
   " call dein#add('w0rp/ale') " Async Linter Engine
 
-  call dein#add('morhetz/gruvbox') "Color scheme: gruvbox
+  "call dein#add('morhetz/gruvbox') "Color scheme: gruvbox
   call dein#add('fenetikm/falcon')
-  call dein#add('andreypopp/vim-colors-plain')
+  "call dein#add('andreypopp/vim-colors-plain')
 
   call dein#add('/usr/local/opt/fzf') " Fuzzy finder
   call dein#add('junegunn/fzf.vim')
@@ -172,9 +176,10 @@ if dein#load_state('~/.dein')
   call dein#add('itchyny/lightline.vim')
 
   " Scala
-  call dein#add('ensime/ensime-vim')
   call dein#add('derekwyatt/vim-scala')
-  call dein#add('neomake/neomake')
+
+  " Markdown
+  "call dein#add('JamshedVesuna/vim-markdown-preview')
 
   " Required:
   call dein#end()
@@ -195,16 +200,24 @@ endif
 """"""""""""""""""""""""
 
 """""""""""""""""""""""""""""
+""" Fugitive              """
+"""""""""""""""""""""""""""""
+
+map <F3> :Gstatus<CR>
+
 """ Plugins configuration """
 """""""""""""""""""""""""""""
 
+let vim_markdown_preview_hotkey='<C-m>'
+let vim_markdown_preview_github=1
+
 """ Deoplete """
 "
-let g:deoplete#enable_at_startup = 1
+let g:deoplete#enable_at_startup = 0
 
 """ C++
-let g:deoplete#sources#clang#libclang_path='/usr/local/Cellar/llvm/HEAD-eebe489/lib/libclang.dylib'
-let g:deoplete#sources#clang#clang_header='/usr/local/Cellar/llvm/HEAD-eebe489/lib/clang/8.0.0/include/'
+let g:deoplete#sources#clang#libclang_path='/usr/local/opt/llvm/lib/libclang.dylib'
+let g:deoplete#sources#clang#clang_header='/usr/local/opt/llvm/lib/clang/9.0.0/include/'
 let g:deoplete#sources#clang#std={'cpp':'c++17'}
 let g:deoplete#sources#clang#flags = [
       \ "-cc1",
@@ -214,7 +227,7 @@ let g:deoplete#sources#clang#flags = [
       \ "-mthread-model", "posix",
       \ "-dwarf-column-info",
       \ "-debugger-tuning=lldb",
-      \ "-resource-dir", "/usr/local/Cellar/llvm/HEAD-eebe489/lib/clang/8.0.0",
+      \ "-resource-dir", "/usr/local/opt/llvm/lib/clang/9.0.0",
       \ "-stdlib=libc++",
       \ "-fdeprecated-macro",
       \ "-ferror-limit", "20",
@@ -249,18 +262,26 @@ let g:neomake_enabled_makers = ['sbt']
 let g:neomake_verbose=3
 
 " Neomake on text change
-autocmd FileType scala InsertLeave,TextChanged * update | Neomake! sbt
+"autocmd FileType scala InsertLeave,TextChanged * update | Neomake! sbt
 
 """"""""""""""""""""""""""""""
 """     Language Server    """
 """"""""""""""""""""""""""""""
 set hidden
 
-let g:LanguageClient_serverCommands = {
-    \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
-    \ }
+"let g:LanguageClient_autoStart = 0
+"nnoremap <leader>lcs :LanguageClientStart<CR>
 
-nnoremap <F7> :call LanguageClient_contextMenu()<CR>
+"let g:LanguageClient_serverCommands = {
+    "\ 'rust': ['rustup', 'run', 'stable', 'rls'],
+    "\ }
+
+"nnoremap <F7> :call LanguageClient_contextMenu()<CR>
+"noremap <silent> H :call LanguageClient_textDocument_hover()<CR>
+"noremap <silent> Z :call LanguageClient_textDocument_definition()<CR>
+"noremap <silent> R :call LanguageClient_textDocument_rename()<CR>
+"noremap <silent> S :call LanugageClient_textDocument_documentSymbol()<CR>
+
 """ Language Server
 " let g:LanguageClient_serverCommands = {
 "     \ 'cpp': ['cquery', "--init={\"index\": {\"threads\": 2}}", '--log-file=/tmp/cq.log'],
@@ -290,7 +311,7 @@ nnoremap <F7> :call LanguageClient_contextMenu()<CR>
 
 """ Color scheme """
 set termguicolors
-set background=dark
+set background=light
 colorscheme falcon
 
 """""""""""""""""""""
@@ -310,7 +331,7 @@ nmap <F8> :Buffers<CR>
 
 """ clang format """
 "
-let g:clang_format#command = "/usr/local/Cellar/llvm/HEAD-eebe489/bin/clang-format"
+let g:clang_format#command = "/usr/local/opt/llvm/bin/clang-format"
 let g:clang_format#code_style = "LLVM"
 let g:clang_format#style_options = {
       \ "AccessModifierOffset" : -2,
@@ -324,22 +345,86 @@ let g:clang_format#style_options = {
       \ "SortUsingDeclarations" : "true",
       \ "Standard" : "C++11"
       \}
-      " \ "BraceWrapping": {
-      " \   "AfterClass": "false",
-      " \   "AfterControlStatement": "false",
-      " \   "AfterEnum": "false",
-      " \   "AfterFunction": "false",
-      " \   "AfterNamespace": "false",
-      " \   "AfterStruct": "false",
-      " \   "AfterUnion": "false",
-      " \   "BeforeCatch": "true",
-      " \   "BeforeElse": "false",
-      " \   "IndentBraces": "false"
-      " \ },
 let g:clang_format#auto_format_on_insert_leave = 0
 autocmd FileType c,cpp nnoremap <buffer><Leader>cf :<C-u>ClangFormat<CR>
 autocmd FileType c,cpp vnoremap <buffer><Leader>cf :ClangFormat<CR>
 
+
+"""" SCALA
+" Configuration for vim-scala
+au BufRead,BufNewFile *.sbt set filetype=scala
+autocmd FileType json syntax match Comment +\/\/.\+$+
+
+" Configuration for coc.nvim
+
+" Smaller updatetime for CursorHold & CursorHoldI
+set updatetime=300
+
+" don't give |ins-completion-menu| messages.
+set shortmess+=c
+
+" always show signcolumns
+set signcolumn=yes
+
+" Some server have issues with backup files, see #649
+set nobackup
+set nowritebackup
+
+" Better display for messages
+set cmdheight=2
+
+" Use <c-space> for trigger completion.
+inoremap <silent><expr> <c-space> coc#refresh()
+
+" Use <cr> for confirm completion, `<C-g>u` means break undo chain at current position.
+" Coc only does snippet and additional edit on confirm.
+inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+
+" Use `[c` and `]c` for navigate diagnostics
+nmap <silent> [c <Plug>(coc-diagnostic-prev)
+nmap <silent> ]c <Plug>(coc-diagnostic-next)
+
+" Remap keys for gotos
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" Remap for do codeAction of current line
+nmap <leader>ac <Plug>(coc-codeaction)
+
+" Remap for do action format
+nnoremap <silent> F :call CocAction('format')<CR>
+
+" Use K for show documentation in preview window
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+  if &filetype == 'vim'
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+
+" Highlight symbol under cursor on CursorHold
+autocmd CursorHold * silent call CocActionAsync('highlight')
+
+" Remap for rename current word
+nmap <leader>rn <Plug>(coc-rename)
+
+" Show all diagnostics
+nnoremap <silent> <space>a  :<C-u>CocList diagnostics<cr>
+" Find symbol of current document
+nnoremap <silent> <space>o  :<C-u>CocList outline<cr>
+" Search workspace symbols
+nnoremap <silent> <space>s  :<C-u>CocList -I symbols<cr>
+" Do default action for next item.
+nnoremap <silent> <space>j  :<C-u>CocNext<CR>
+" Do default action for previous item.
+nnoremap <silent> <space>k  :<C-u>CocPrev<CR>
+" Resume latest coc list
+nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
 
 """ NERD """
 "
