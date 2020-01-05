@@ -36,8 +36,8 @@ set lazyredraw      " redraw only when we need to
 set number          " show line numbers
 set showmatch       " highlight matching [{()}]
 set wildmenu        " visual autocomplete for command menu
-set textwidth=100
-set colorcolumn=100
+set textwidth=120
+set colorcolumn=120
 set scrolloff=9999  " Keep working line in the center
 
 """ Search
@@ -131,32 +131,27 @@ if dein#load_state('~/.dein')
   call dein#add('Shougo/deoplete.nvim') " Completion engine
 
   " Language Server
-  call dein#add('neoclide/coc.nvim', {'build': './install.sh nightly'})
+  call dein#add('neoclide/coc.nvim', {'merge':0, 'rev': 'release'})
 
   call dein#add('zchee/deoplete-clang') " clang-driven completion for C++
   call dein#add('rhysd/vim-clang-format')
   call dein#add('octol/vim-cpp-enhanced-highlight')
 
-  "call dein#add('sebastianmarkow/deoplete-rust')
-  "call dein#add('autozimu/LanguageClient-neovim', {'build': './install.sh'})
-  "call dein#add('rust-lang/rust.vim')
+  call dein#add('mrk21/yaml-vim')
+
+  call dein#add('rust-lang/rust.vim')
+  call dein#add('alaviss/nim.nvim')
 
   call dein#add('peterhoeg/vim-qml')
   call dein#add('dag/vim-fish')
   call dein#add('pboettch/vim-cmake-syntax')
+  call dein#add('toml-lang/toml')
 
-  "call dein#add('carlitux/deoplete-ternjs')
-  "call dein#add('pangloss/vim-javascript')
-
-  call dein#add('python-mode/python-mode')
-  call dein#add('nvie/vim-flake8')
+  "call dein#add('python-mode/python-mode')
+  call dein#add('ambv/black')
   call dein#add('zchee/deoplete-jedi')
 
-  " call dein#add('w0rp/ale') " Async Linter Engine
-
-  "call dein#add('morhetz/gruvbox') "Color scheme: gruvbox
   call dein#add('fenetikm/falcon')
-  "call dein#add('andreypopp/vim-colors-plain')
 
   call dein#add('/usr/local/opt/fzf') " Fuzzy finder
   call dein#add('junegunn/fzf.vim')
@@ -174,12 +169,6 @@ if dein#load_state('~/.dein')
 
   call dein#add('easymotion/vim-easymotion')
   call dein#add('itchyny/lightline.vim')
-
-  " Scala
-  call dein#add('derekwyatt/vim-scala')
-
-  " Markdown
-  "call dein#add('JamshedVesuna/vim-markdown-preview')
 
   " Required:
   call dein#end()
@@ -208,110 +197,37 @@ map <F3> :Gstatus<CR>
 """ Plugins configuration """
 """""""""""""""""""""""""""""
 
+autocmd BufWritePre *.py execute ':Black'
+let g:black_linelength = 120
+
 let vim_markdown_preview_hotkey='<C-m>'
 let vim_markdown_preview_github=1
 
 """ Deoplete """
 "
-let g:deoplete#enable_at_startup = 0
+let g:deoplete#enable_at_startup = 1
 
 """ C++
 let g:deoplete#sources#clang#libclang_path='/usr/local/opt/llvm/lib/libclang.dylib'
-let g:deoplete#sources#clang#clang_header='/usr/local/opt/llvm/lib/clang/9.0.0/include/'
-let g:deoplete#sources#clang#std={'cpp':'c++17'}
+let g:deoplete#sources#clang#clang_header='/usr/local/opt/llvm/lib/clang/9.0.0/include'
+let g:deoplete#sources#clang#std={'cpp':'c++20'}
 let g:deoplete#sources#clang#flags = [
-      \ "-cc1",
-      \ "-triple", "x86_64-apple-macosx10.13.0",
-      \ "-discard-value-names",
-      \ "-mrelocation-model", "pic", "-pic-level", "2",
-      \ "-mthread-model", "posix",
-      \ "-dwarf-column-info",
-      \ "-debugger-tuning=lldb",
-      \ "-resource-dir", "/usr/local/opt/llvm/lib/clang/9.0.0",
-      \ "-stdlib=libc++",
-      \ "-fdeprecated-macro",
-      \ "-ferror-limit", "20",
-      \ "-fmessage-length", "99",
-      \ "-stack-protector", "1",
-      \ "-fcxx-exceptions",
-      \ "-fexceptions",
-      \ "-fmax-type-align=16",
-      \ "-fdiagnostics-show-option"]
+      \ "-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk"
+      \ ]
 
 """ Scala
 let g:deoplete#sources={} 
 let g:deoplete#sources._=['buffer', 'member', 'tag', 'file', 'omni', 'ultisnips'] 
 let g:deoplete#omni#input_patterns={} 
-let g:deoplete#omni#input_patterns.scala='[^. *\t]\.\w*'
-
-"Linting with neomake
-let g:neomake_sbt_maker = {
-      \ 'exe': 'sbt',
-      \ 'args': ['-Dsbt.log.noformat=true', 'compile'],
-      \ 'append_file': 0,
-      \ 'auto_enabled': 1,
-      \ 'output_stream': 'stdout',
-      \ 'errorformat':
-          \ '%E[%trror]\ %f:%l:\ %m,' .
-            \ '%-Z[error]\ %p^,' .
-            \ '%-C%.%#,' .
-            \ '%-G%.%#'
-     \ }
-
-let g:neomake_enabled_makers = ['sbt']
-let g:neomake_verbose=3
-
-" Neomake on text change
-"autocmd FileType scala InsertLeave,TextChanged * update | Neomake! sbt
 
 """"""""""""""""""""""""""""""
 """     Language Server    """
 """"""""""""""""""""""""""""""
 set hidden
 
-"let g:LanguageClient_autoStart = 0
-"nnoremap <leader>lcs :LanguageClientStart<CR>
-
-"let g:LanguageClient_serverCommands = {
-    "\ 'rust': ['rustup', 'run', 'stable', 'rls'],
-    "\ }
-
-"nnoremap <F7> :call LanguageClient_contextMenu()<CR>
-"noremap <silent> H :call LanguageClient_textDocument_hover()<CR>
-"noremap <silent> Z :call LanguageClient_textDocument_definition()<CR>
-"noremap <silent> R :call LanguageClient_textDocument_rename()<CR>
-"noremap <silent> S :call LanugageClient_textDocument_documentSymbol()<CR>
-
-""" Language Server
-" let g:LanguageClient_serverCommands = {
-"     \ 'cpp': ['cquery', "--init={\"index\": {\"threads\": 2}}", '--log-file=/tmp/cq.log'],
-"     \ 'c': ['cquery', '--log-file=/tmp/cq.log'],
-"     \ }
-" 
-" let g:LanguageClient_loadSettings = 1 " Use an absolute configuration path if you want system-wide settings
-" let g:LanguageClient_settingsPath = '/Users/khranovs/.config/nvim/settings.json'
-" set completefunc=LanguageClient#complete
-" set formatexpr=LanguageClient_textDocument_rangeFormatting()
-" 
-" nnoremap <silent> gh :call LanguageClient#textDocument_hover()<CR>
-" nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
-" nnoremap <silent> gr :call LanguageClient#textDocument_references()<CR>
-" nnoremap <silent> gs :call LanguageClient#textDocument_documentSymbol()<CR>
-" nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
-" Or map each action separately
-" nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
-" nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
-" nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
-" let g:deoplete#sources#rust#racer_binary='/Users/khranovs/.cargo/bin/racer'
-" let g:deoplete#sources#rust#rust_source_path='/Users/khranovs/ExtProjects/rust-src/src'
-" let g:deoplete#sources#rust#show_duplicates=0
-" 
-" autocmd FileType rs nnoremap <buffer><Leader>cf :<C-u>RustFmt<CR>
-" autocmd FileType rs vnoremap <buffer><Leader>cf :RustFmtRange<CR>
-
 """ Color scheme """
 set termguicolors
-set background=light
+set background=dark
 colorscheme falcon
 
 """""""""""""""""""""
@@ -321,6 +237,7 @@ let g:cpp_class_scope_highlight = 1
 let g:cpp_member_variable_highlight = 1
 let g:cpp_class_decl_highlight = 1
 let g:cpp_experimental_template_highlight = 1
+let g:cpp_concepts_highlight = 1
 
 """ FZF """
 "
@@ -331,24 +248,20 @@ nmap <F8> :Buffers<CR>
 
 """ clang format """
 "
-let g:clang_format#command = "/usr/local/opt/llvm/bin/clang-format"
-let g:clang_format#code_style = "LLVM"
+let g:clang_format#command = "clang-format"
 let g:clang_format#style_options = {
-      \ "AccessModifierOffset" : -2,
-      \ "AllowShortIfStatementsOnASingleLine" : "true",
-      \ "AllowShortLoopsOnASingleLine" : "true",
-      \ "ColumnLimit" : 100,
-      \ "CompactNamespaces" : "false",
-      \ "Cpp11BracedListStyle" : "true",
-      \ "FixNamespaceComments" : "true",
-      \ "PointerAlignment": "Left",
-      \ "SortUsingDeclarations" : "true",
-      \ "Standard" : "C++11"
+      \ "ColumnLimit" : 120,
+      \ "Standard" : "Latest"
       \}
 let g:clang_format#auto_format_on_insert_leave = 0
-autocmd FileType c,cpp nnoremap <buffer><Leader>cf :<C-u>ClangFormat<CR>
-autocmd FileType c,cpp vnoremap <buffer><Leader>cf :ClangFormat<CR>
 
+"autocmd FileType c,cpp ClangFormatAutoEnable
+
+" map to <Leader>cf in C++ code
+autocmd FileType c,cpp,objc nnoremap <buffer><Leader>cf :<C-u>ClangFormat<CR>
+autocmd FileType c,cpp,objc vnoremap <buffer><Leader>cf :ClangFormat<CR>
+" Toggle auto formatting:
+"nmap <Leader>C :ClangFormatAutoToggle<CR>
 
 """" SCALA
 " Configuration for vim-scala
@@ -432,6 +345,11 @@ nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 map <F5> :NERDTreeToggle<CR>
 map <F4> :NERDTreeFind<CR>
+
+
+"""" YAML """
+au! BufNewFile,BufReadPost *.{yaml,yml} set filetype=yaml foldmethod=indent
+autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
 
 " For conceal markers.
 if has('conceal')
